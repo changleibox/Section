@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#999">
+
+    <me.box.app.simple.Section
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="fill"
+        android:orientation="vertical"
+        app:dividerColor="@android:color/transparent"
+        app:dividerSize="20dp"
+        app:showDividerModel="middle"
+        tools:context=".MainActivity">
+
+        <include layout="@layout/item_layout" />
+
+        <me.box.app.simple.Section
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_layout" />
+        </me.box.app.simple.Section>
+
+        <me.box.app.simple.Section
+            android:id="@+id/section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:dividerColor="@color/design_default_color_error"
+            app:showDividerModel="middle|end|start"
+            app:dividerSize="10dp"
+            app:footer="@layout/item_header_footer"
+            app:header="@layout/item_header_footer">
+
+            <include layout="@layout/item_layout" />
+
+            <include layout="@layout/item_layout" />
+
+            <include layout="@layout/item_layout" />
+        </me.box.app.simple.Section>
+
+        <me.box.app.simple.Section
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:dividerColor="@color/design_default_color_error"
+            app:dividerSize="0.3dp">
+
+            <include layout="@layout/item_layout" />
+
+            <include layout="@layout/item_layout" />
+
+            <include layout="@layout/item_layout" />
+        </me.box.app.simple.Section>
+
+    </me.box.app.simple.Section>
+</ScrollView>

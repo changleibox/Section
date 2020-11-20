@@ -1,0 +1,14 @@
+<resources>
+    <declare-styleable name="Section">
+        <attr name="dividerColor" format="color" />
+        <attr name="dividerSize" format="dimension" />
+        <attr name="header" format="reference" />
+        <attr name="footer" format="reference" />
+        <attr name="showDividerModel" format="flags">
+            <flag name="none" value="0" />
+            <flag name="start" value="1" />
+            <flag name="middle" value="2" />
+            <flag name="end" value="4" />
+        </attr>
+    </declare-styleable>
+</resources>
