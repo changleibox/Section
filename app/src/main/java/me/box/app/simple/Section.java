@@ -218,8 +218,7 @@ public class Section extends LinearLayout {
             length++;
         }
         for (int i = 0; i < length; i++) {
-            if (showMiddle && (showStart && i % 2 != 0 || !showStart && i % 2 == 0)
-                    || !showMiddle && ((!showStart || i > 0) && (showStart && i == childCount || i < childCount))) {
+            if (isShowDivider(showStart, showMiddle, childCount, i)) {
                 continue;
             }
             View divider = getDivider(i);
@@ -227,6 +226,11 @@ public class Section extends LinearLayout {
             final LayoutParams dividerParams = getDividerLayoutParams(divider);
             super.addView(divider, i, dividerParams);
         }
+    }
+
+    private boolean isShowDivider(boolean showStart, boolean showMiddle, int childCount, int i) {
+        return showMiddle && (showStart && i % 2 != 0 || !showStart && i % 2 == 0)
+                || !showMiddle && ((!showStart || i > 0) && (showStart && i == childCount || i < childCount));
     }
 
     private View getDivider(int i) {
@@ -242,20 +246,17 @@ public class Section extends LinearLayout {
 
     private LayoutParams getDividerLayoutParams(View divider) {
         LayoutParams dividerParams = (LayoutParams) divider.getLayoutParams();
-        if (dividerParams == null) {
-            switch (getOrientation()) {
-                case LinearLayout.HORIZONTAL:
-                    dividerParams = new LayoutParams(mDividerSize, LayoutParams.MATCH_PARENT);
-                    break;
-                case LinearLayout.VERTICAL:
-                    dividerParams = new LayoutParams(LayoutParams.MATCH_PARENT, mDividerSize);
-                    break;
-                default:
-                    dividerParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                    break;
-            }
+        if (dividerParams != null) {
+            return dividerParams;
         }
-        return dividerParams;
+        switch (getOrientation()) {
+            case LinearLayout.HORIZONTAL:
+                return new LayoutParams(mDividerSize, LayoutParams.MATCH_PARENT);
+            case LinearLayout.VERTICAL:
+                return new LayoutParams(LayoutParams.MATCH_PARENT, mDividerSize);
+            default:
+                return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        }
     }
 
     public interface DividerBuilder {
