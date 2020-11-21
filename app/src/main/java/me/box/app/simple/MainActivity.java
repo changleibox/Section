@@ -1,5 +1,6 @@
 package me.box.app.simple;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -14,6 +15,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final Section section = findViewById(R.id.section);
+
+        final TextView header = new TextView(this);
+        header.setText(R.string.label_header);
+        section.setHeader(header);
+        final TextView footer = new TextView(this);
+        footer.setText(R.string.label_footer);
+        section.setFooter(footer);
+
+        section.setDividerSize(40);
+        section.setDividerColor(Color.BLUE);
 
         section.setShowDividerModels(Section.DIVIDER_MIDDLE | Section.DIVIDER_START | Section.DIVIDER_END);
         section.setDividerBuilder((index, dividerColor, dividerSize) -> {
