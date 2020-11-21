@@ -213,12 +213,14 @@ public class Section extends LinearLayout {
         }
         if ((mShowDividerModels & DIVIDER_MIDDLE) == DIVIDER_MIDDLE) {
             final int childCount = getChildCount();
+            int startIndex = offset;
             for (int i = 0; i < childCount - 1; i++) {
                 final View child = getChildAt(i);
                 if (child.getVisibility() == GONE) {
                     continue;
                 }
-                dividerIndexes.add(i * 2 + 1 + offset);
+                startIndex++;
+                dividerIndexes.add(i + startIndex);
             }
         }
         if ((mShowDividerModels & DIVIDER_END) == DIVIDER_END) {
