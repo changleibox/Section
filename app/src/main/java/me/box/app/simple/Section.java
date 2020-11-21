@@ -6,18 +6,17 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
-import androidx.collection.ArraySet;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Implementation of App Widget functionality.
@@ -65,19 +64,29 @@ public class Section extends LinearLayout {
     public Section(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Section, defStyleAttr, 0);
-        mDividerColor = typedArray.getColor(R.styleable.Section_dividerColor, Color.TRANSPARENT);
-        mDividerSize = typedArray.getDimensionPixelOffset(R.styleable.Section_dividerSize, 0);
-        mShowDividerModels = typedArray.getInt(R.styleable.Section_showDividerModel, DIVIDER_NONE);
-        final int headerResourceId = typedArray.getResourceId(R.styleable.Section_header, 0);
+        final int dividerColor = typedArray.getColor(R.styleable.Section_dividerColor, Color.TRANSPARENT);
+        final int dividerSize = typedArray.getDimensionPixelOffset(R.styleable.Section_dividerSize, 0);
+        final int showDividerModels = typedArray.getInt(R.styleable.Section_showDividerModel, DIVIDER_NONE);
+
         final LayoutInflater inflater = LayoutInflater.from(context);
+        final int headerResourceId = typedArray.getResourceId(R.styleable.Section_header, 0);
+        View header = null;
         if (headerResourceId != 0) {
-            mHeader = inflater.inflate(headerResourceId, this, false);
+            header = inflater.inflate(headerResourceId, this, false);
         }
         final int footerResourceId = typedArray.getResourceId(R.styleable.Section_footer, 0);
+        View footer = null;
         if (footerResourceId != 0) {
-            mFooter = inflater.inflate(footerResourceId, this, false);
+            footer = inflater.inflate(footerResourceId, this, false);
         }
+
         typedArray.recycle();
+
+        setHeader(header);
+        setFooter(footer);
+        setDividerColor(dividerColor);
+        setDividerSize(dividerSize);
+        setShowDividerModels(showDividerModels);
     }
 
     /**
@@ -175,7 +184,7 @@ public class Section extends LinearLayout {
      * 是否显示divider
      */
     public boolean isShowDividers() {
-        return mShowDividerModels != DIVIDER_NONE && (mDividerBuilder != null || mDividerSize > 0);
+        return mShowDividerModels != DIVIDER_NONE && (mDividerBuilder != null || mDividerSize > 0) && getChildCount() > 0;
     }
 
     @Override
@@ -211,12 +220,7 @@ public class Section extends LinearLayout {
 
         resolveDivider();
 
-        if (mHeader != null) {
-            super.addView(mHeader, 0, mHeader.getLayoutParams());
-        }
-        if (mFooter != null) {
-            super.addView(mFooter, -1, mFooter.getLayoutParams());
-        }
+        resolveHeaderFooter();
     }
 
     private void resolveDivider() {
@@ -227,24 +231,27 @@ public class Section extends LinearLayout {
         if (!isShowDividers()) {
             return;
         }
-        final Set<Integer> dividerIndexes = new ArraySet<>();
+        final List<Integer> dividerIndexes = new ArrayList<>();
         if ((mShowDividerModels & DIVIDER_START) == DIVIDER_START) {
             dividerIndexes.add(0);
         }
         if ((mShowDividerModels & DIVIDER_MIDDLE) == DIVIDER_MIDDLE) {
             final int childCount = getChildCount();
-            int startIndex = dividerIndexes.size();
-            for (int i = 0; i < childCount - 1; i++) {
+            int visibilityCount = dividerIndexes.size();
+            for (int i = 0; i < childCount; i++) {
                 final View child = getChildAt(i);
                 if (child.getVisibility() == GONE) {
                     continue;
                 }
-                startIndex++;
-                dividerIndexes.add(i + startIndex);
+                visibilityCount++;
+                dividerIndexes.add(i + visibilityCount);
+            }
+            if (!dividerIndexes.isEmpty()) {
+                dividerIndexes.remove(visibilityCount - 1);
             }
         }
         if ((mShowDividerModels & DIVIDER_END) == DIVIDER_END) {
-            dividerIndexes.add(-1);
+            dividerIndexes.add(getChildCount() + dividerIndexes.size());
         }
         for (Integer dividerIndex : dividerIndexes) {
             View divider = getDivider(dividerIndex / 2);
@@ -260,6 +267,7 @@ public class Section extends LinearLayout {
             divider = new View(getContext());
             divider.setBackgroundColor(mDividerColor);
         } else {
+            System.out.println(index);
             divider = mDividerBuilder.build(index, mDividerColor, mDividerSize);
         }
         return divider;
@@ -277,6 +285,23 @@ public class Section extends LinearLayout {
                 return new LayoutParams(LayoutParams.MATCH_PARENT, mDividerSize);
             default:
                 return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    private void resolveHeaderFooter() {
+        if (mHeader != null) {
+            ViewGroup.LayoutParams layoutParams = mHeader.getLayoutParams();
+            if (layoutParams == null) {
+                layoutParams = generateDefaultLayoutParams();
+            }
+            super.addView(mHeader, 0, layoutParams);
+        }
+        if (mFooter != null) {
+            ViewGroup.LayoutParams layoutParams = mFooter.getLayoutParams();
+            if (layoutParams == null) {
+                layoutParams = generateDefaultLayoutParams();
+            }
+            super.addView(mFooter, -1, layoutParams);
         }
     }
 
