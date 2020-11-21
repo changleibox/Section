@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
@@ -173,18 +172,34 @@ public class Section extends LinearLayout {
     }
 
     @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        super.addView(child, index, params);
+    public void onViewAdded(View child) {
+        super.onViewAdded(child);
+        if (isDecorateViews(child)) {
+            return;
+        }
         resolveDecorate();
+    }
+
+    @Override
+    public void onViewRemoved(View child) {
+        super.onViewRemoved(child);
+        if (isDecorateViews(child)) {
+            return;
+        }
+        resolveDecorate();
+    }
+
+    private boolean isDecorateViews(View child) {
+        return child == mHeader || child == mFooter || mDividers.contains(child);
     }
 
     private void resolveDecorate() {
         if (mHeader != null) {
-            removeView(mHeader);
+            super.removeView(mHeader);
         }
 
         if (mFooter != null) {
-            removeView(mFooter);
+            super.removeView(mFooter);
         }
 
         resolveDivider();
@@ -199,7 +214,7 @@ public class Section extends LinearLayout {
 
     private void resolveDivider() {
         for (View divider : mDividers) {
-            removeView(divider);
+            super.removeView(divider);
         }
         mDividers.clear();
         if (!isShowDividers()) {
