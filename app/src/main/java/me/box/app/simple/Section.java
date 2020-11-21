@@ -165,6 +165,13 @@ public class Section extends LinearLayout {
     }
 
     /**
+     * 重新加载分割线
+     */
+    public void reloadDecorate() {
+        resolveDecorate();
+    }
+
+    /**
      * 是否显示divider
      */
     public boolean isShowDividers() {

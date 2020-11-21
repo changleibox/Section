@@ -33,10 +33,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:dividerColor="@color/design_default_color_error"
-            app:showDividerModel="middle|end|start"
             app:dividerSize="10dp"
             app:footer="@layout/item_header_footer"
-            app:header="@layout/item_header_footer">
+            app:header="@layout/item_header_footer"
+            app:showDividerModel="middle|end|start">
 
             <include layout="@layout/item_layout" />
 
@@ -50,7 +50,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:dividerColor="@color/design_default_color_error"
-            app:dividerSize="0.3dp">
+            app:dividerSize="0.5dp"
+            app:showDividerModel="middle">
 
             <include layout="@layout/item_layout" />
 
