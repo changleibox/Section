@@ -12,11 +12,13 @@ import android.widget.LinearLayout;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import androidx.collection.ArraySet;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Implementation of App Widget functionality.
@@ -203,43 +205,40 @@ public class Section extends LinearLayout {
         if (!isShowDividers()) {
             return;
         }
-        final boolean showStart = (mShowDividerModels & DIVIDER_START) == DIVIDER_START;
-        final boolean showMiddle = (mShowDividerModels & DIVIDER_MIDDLE) == DIVIDER_MIDDLE;
-        final boolean showEnd = (mShowDividerModels & DIVIDER_END) == DIVIDER_END;
-        final int childCount = getChildCount();
-        int length = childCount;
-        if (showMiddle) {
-            length = childCount * 2 - 1;
+        final Set<Integer> dividerIndexes = new ArraySet<>();
+        int offset = 0;
+        if ((mShowDividerModels & DIVIDER_START) == DIVIDER_START) {
+            dividerIndexes.add(0);
+            offset = 1;
         }
-        if (showStart) {
-            length++;
-        }
-        if (showEnd) {
-            length++;
-        }
-        for (int i = 0; i < length; i++) {
-            if (isShowDivider(showStart, showMiddle, childCount, i)) {
-                continue;
+        if ((mShowDividerModels & DIVIDER_MIDDLE) == DIVIDER_MIDDLE) {
+            final int childCount = getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                final View child = getChildAt(i);
+                if (child.getVisibility() == GONE || i == childCount - 1) {
+                    continue;
+                }
+                dividerIndexes.add(i * 2 + 1 + offset);
             }
-            View divider = getDivider(i);
+        }
+        if ((mShowDividerModels & DIVIDER_END) == DIVIDER_END) {
+            dividerIndexes.add(-1);
+        }
+        for (Integer dividerIndex : dividerIndexes) {
+            View divider = getDivider(dividerIndex / 2);
             mDividers.add(divider);
             final LayoutParams dividerParams = getDividerLayoutParams(divider);
-            super.addView(divider, i, dividerParams);
+            super.addView(divider, dividerIndex, dividerParams);
         }
     }
 
-    private boolean isShowDivider(boolean showStart, boolean showMiddle, int childCount, int i) {
-        return showMiddle && (showStart && i % 2 != 0 || !showStart && i % 2 == 0)
-                || !showMiddle && ((!showStart || i > 0) && (showStart && i == childCount || i < childCount));
-    }
-
-    private View getDivider(int i) {
+    private View getDivider(int index) {
         View divider;
         if (mDividerBuilder == null) {
             divider = new View(getContext());
             divider.setBackgroundColor(mDividerColor);
         } else {
-            divider = mDividerBuilder.build(i / 2, mDividerColor, mDividerSize);
+            divider = mDividerBuilder.build(index, mDividerColor, mDividerSize);
         }
         return divider;
     }
