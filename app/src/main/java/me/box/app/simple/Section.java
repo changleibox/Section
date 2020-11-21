@@ -206,14 +206,12 @@ public class Section extends LinearLayout {
             return;
         }
         final Set<Integer> dividerIndexes = new ArraySet<>();
-        int offset = 0;
         if ((mShowDividerModels & DIVIDER_START) == DIVIDER_START) {
             dividerIndexes.add(0);
-            offset = 1;
         }
         if ((mShowDividerModels & DIVIDER_MIDDLE) == DIVIDER_MIDDLE) {
             final int childCount = getChildCount();
-            int startIndex = offset;
+            int startIndex = dividerIndexes.size();
             for (int i = 0; i < childCount - 1; i++) {
                 final View child = getChildAt(i);
                 if (child.getVisibility() == GONE) {
