@@ -44,7 +44,7 @@ public class Section extends LinearLayout {
     public @interface DividerModel {
     }
 
-    private final List<View> _dividers = new ArrayList<>();
+    private final List<View> mDividers = new ArrayList<>();
 
     private int mDividerColor;
     private int mDividerSize;
@@ -196,10 +196,10 @@ public class Section extends LinearLayout {
     }
 
     private void resolveDivider() {
-        for (View divider : _dividers) {
+        for (View divider : mDividers) {
             removeView(divider);
         }
-        _dividers.clear();
+        mDividers.clear();
         if (!isShowDividers()) {
             return;
         }
@@ -222,30 +222,40 @@ public class Section extends LinearLayout {
                     || !showMiddle && ((!showStart || i > 0) && (showStart && i == childCount || i < childCount))) {
                 continue;
             }
-            View divider;
-            if (mDividerBuilder == null) {
-                divider = new View(getContext());
-                divider.setBackgroundColor(mDividerColor);
-            } else {
-                divider = mDividerBuilder.build(i / 2, mDividerColor, mDividerSize);
-            }
-            _dividers.add(divider);
-            LayoutParams dividerParams = (LayoutParams) divider.getLayoutParams();
-            if (dividerParams == null) {
-                switch (getOrientation()) {
-                    case LinearLayout.HORIZONTAL:
-                        dividerParams = new LayoutParams(mDividerSize, LayoutParams.MATCH_PARENT);
-                        break;
-                    case LinearLayout.VERTICAL:
-                        dividerParams = new LayoutParams(LayoutParams.MATCH_PARENT, mDividerSize);
-                        break;
-                    default:
-                        dividerParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                        break;
-                }
-            }
+            View divider = getDivider(i);
+            mDividers.add(divider);
+            final LayoutParams dividerParams = getDividerLayoutParams(divider);
             super.addView(divider, i, dividerParams);
         }
+    }
+
+    private View getDivider(int i) {
+        View divider;
+        if (mDividerBuilder == null) {
+            divider = new View(getContext());
+            divider.setBackgroundColor(mDividerColor);
+        } else {
+            divider = mDividerBuilder.build(i / 2, mDividerColor, mDividerSize);
+        }
+        return divider;
+    }
+
+    private LayoutParams getDividerLayoutParams(View divider) {
+        LayoutParams dividerParams = (LayoutParams) divider.getLayoutParams();
+        if (dividerParams == null) {
+            switch (getOrientation()) {
+                case LinearLayout.HORIZONTAL:
+                    dividerParams = new LayoutParams(mDividerSize, LayoutParams.MATCH_PARENT);
+                    break;
+                case LinearLayout.VERTICAL:
+                    dividerParams = new LayoutParams(LayoutParams.MATCH_PARENT, mDividerSize);
+                    break;
+                default:
+                    dividerParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                    break;
+            }
+        }
+        return dividerParams;
     }
 
     public interface DividerBuilder {
