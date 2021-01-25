@@ -2,10 +2,12 @@ package me.box.app.simple;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,5 +38,10 @@ public class MainActivity extends AppCompatActivity {
         });
         section.getChildAt(2).setVisibility(View.GONE);
         section.reloadDecorate();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 }
